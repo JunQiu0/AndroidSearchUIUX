@@ -10,6 +10,9 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.ybook.databinding.ActivityMainBinding
+import androidx.room.Room
+import com.example.ybook.data.AppDatabase
+import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,6 +20,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java, "ybook"
+        ).build()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -29,6 +37,11 @@ class MainActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = ""
+
+        val executor = Executors.newSingleThreadExecutor()
+        executor.execute {
+            db.summaryDao().findSummaries("Helloworld")
+        }
 
         navView.setupWithNavController(navController)
     }
